@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Form, Button } from "react-bootstrap";
 import './InputForm.css'
 
 const InputForm = () => {
-  const [title, setTitle] = useState();
-  const [note, setNote] = useState();
-
+  const titleRef = useRef();
+  const bodyRef = useRef();
   
-  const handleNote = e => {
-    console.log(title.target.value);
-    console.log(note.target.value);
+  const handleAddNote = e => {
+    const title = titleRef.current.value;
+    const body = bodyRef.current.value;
+
+    const newTodo = {title, body};
+
+    fetch('http://localhost:5000/notes', {
+      method: 'post',
+      headers: {'content-type': 'application/json'},
+      body: JSON.stringify(newTodo)
+    })
+      .then()
 
     e.preventDefault();
   }
@@ -18,19 +26,12 @@ const InputForm = () => {
     <div>
       <div className="form">
         <h4 className="text-white">Write A Note</h4>
-        <Form onSubmit={handleNote}>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Control type="text" onChange={setTitle} placeholder="Enter Title" />
-          </Form.Group>
+        <form onSubmit={handleAddNote}>
+          <input type="text" ref={titleRef} className="border-0 py-2 rounded" />
+          <textarea rows="10" ref={bodyRef} className="border-0 rounded"></textarea>
 
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Control as="textarea" rows={3} onChange={setNote} placeholder="Write The Note" />
-          </Form.Group>
-
-          <Button variant="light" type="submit">
-            Submit
-          </Button>
-        </Form>
+          <Button variant="light" type="submit">Submit</Button>
+        </form>
       </div>
     </div>
   );
